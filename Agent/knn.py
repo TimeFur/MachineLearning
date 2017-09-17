@@ -9,6 +9,33 @@ def cos_dist (vec_a, vec_b):
     dist = dot(vec_a, vec_b) / (linalg.norm(vec_a) * linalg.norm(vec_b))
     return dist
 
+class knn():
+    def __init__(self, testdata, sample_group, target, k):
+        self.testdata = testdata
+        self.sample_group = sample_group
+        self.target = target
+        self.k = k
+        
+    def train(self):
+        target_group = None
+        distance = []
+        sortdistance_index = []
+        target_vote = {}
+        
+        for i in range(len(self.sample_group)):
+            distance.append(cos_dist(self.testdata, self.sample_group[i,:]))
+        
+        sortdistance_index = argsort(distance) #sorting distance and then return minimum dis's index
+
+        for i in sortdistance_index:
+            target_vote[str(self.target[i])] = 0
+        for i in sortdistance_index:
+            target_vote[str(self.target[i])] += 1
+            if target_vote[str(self.target[i])] == self.k and target_group== None:
+                target_group = str(self.target[i])
+
+        return target_group
+
 def knn_train (testdata, sample_group, target, k):
     target_group = None
     distance = []
@@ -29,22 +56,3 @@ def knn_train (testdata, sample_group, target, k):
 
     return target_group
 
-
-
-#Testing
-sample = array( [[1,2],
-                  [5,7],
-                  [1,21],
-                  [41,32],
-                  [21,2],
-                  [0,8]])
-target = array(["A",
-                "B",
-                "A",
-                "B",
-                "B",
-                "A"])
-test = array([6,9])
-k = 3
-
-print knn_train(test, sample, target, k)

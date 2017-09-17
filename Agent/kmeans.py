@@ -23,7 +23,7 @@ class kmeans():
             self.cluster_center()
         
         print "Search Done!"
-        for i in range(k):
+        for i in range(self.k):
             print i, self.center[i]
         print self.group_id
         
@@ -31,15 +31,15 @@ class kmeans():
         if self.center == None:
             self.center = []
             last_index = 0
-            length = len(self.dataset) / k
+            length = len(self.dataset) / self.k
 
-            for i in range(k):
+            for i in range(self.k):
                 last_index = random.randint(last_index, last_index + length)
                 self.center.append(self.dataset[last_index])
         else:
             self.center = []
             avg_dict = {}       # id, id_len
-            for i in range(k):
+            for i in range(self.k):
                 avg_dict[str(i)] = 0
                 avg_dict[str(i) + "_len"] = 0
             for i in range(len(self.dataset)):
@@ -47,7 +47,7 @@ class kmeans():
                 avg_dict[str(_id)] += self.dataset[_id]
                 avg_dict[str(_id) + "_len"] += 1
             
-            for i in range(k):
+            for i in range(self.k):
                 if float(avg_dict[str(i) + "_len"]) != 0:
                     self.center.append(np.float32(avg_dict[str(i)]) / np.float32(avg_dict[str(i) + "_len"]))
                 else:
@@ -58,7 +58,7 @@ class kmeans():
         for data in self.dataset:
             min_index = -1
             min_dis = -1
-            for i in range(k):
+            for i in range(self.k):
                 dis = euclidean_dist(data, array(self.center[i]))
                 if min_dis == -1:
                     min_dis = dis
@@ -74,15 +74,5 @@ class kmeans():
             self.search_counter += 1
             self.search_flag = True
             self.group_id = group[:]
-#Testing
-sample = array( [[1,2],
-                  [5,7],
-                  [1,21],
-                  [41,32],
-                  [21,2],
-                  [0,8]])
-k = 3
 
-k_machine = kmeans(sample, k)
-k_machine.train()
     
