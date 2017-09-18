@@ -3,6 +3,7 @@ import os, sys
 os.sys.path.append("./Agent/")
 from kmeans import *
 from knn import *
+from sklearn import tree
 
 '''----------------------
     Global variable
