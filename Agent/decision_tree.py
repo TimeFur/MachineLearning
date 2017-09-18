@@ -23,7 +23,6 @@ def arrange_dataset(target, attribute, attr_dataset):
                 dataset[attr][attr_set][target[j]] = 1
             else:
                 dataset[attr][attr_set][target[j]] += 1
-    print dataset
     return dataset
 
 def entropy(y_num, n_num):
@@ -38,6 +37,10 @@ def entropy(y_num, n_num):
 
 def E(attr, dataset):
     e_value = 0
+    length = 0
+    for key in dataset[attr]:
+        for k in dataset[attr][key]:
+            length += dataset[attr][key][k]
     for key in dataset[attr]:
         y_num = 0
         n_num = 0
@@ -45,9 +48,35 @@ def E(attr, dataset):
             y_num = dataset[attr][key]['y']
         if ('n' in dataset[attr][key]) is True:
             n_num = dataset[attr][key]['n']
-        e_value += entropy(y_num, n_num) * (float(y_num+ n_num) / float(len(target)))
-    print e_value
+        e_value += entropy(y_num, n_num) * (float(y_num+ n_num) / float(length))
     return e_value
-    
-dataset = arrange_dataset(target, attribute, attr_dataset)
-E("outlook", dataset)
+
+def gain(attribute, dataset):
+    #Entropy(T) - Entropy(T, attr)
+    y_num = 0
+    n_num = 0
+    for attr in dataset:
+        for attr_set in dataset[attr]:
+            if ('y' in dataset[attr][attr_set]) is True:
+                y_num += dataset[attr][attr_set]['y']
+            if ('n' in dataset[attr][attr_set]) is True:
+                n_num += dataset[attr][attr_set]['n']
+        break
+    value = entropy(y_num, n_num) - E(attribute, dataset)
+    return value
+
+#testing
+def main():
+    dataset = arrange_dataset(target, attribute, attr_dataset)
+
+    for attr in dataset:
+        print attr
+        print gain(attr, dataset)
+        print "============"
+
+if __name__ == "__main__":
+    main()
+
+
+
+
