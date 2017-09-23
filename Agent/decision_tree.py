@@ -12,6 +12,21 @@ attr_dataset = [['rainy', 'rainy', 'overcast', 'sunny', 'sunny', 'sunny', 'overc
            ['high', 'high', 'high', 'high', 'normal', 'normal', 'normal', 'high', 'normal', 'normal', 'normal', 'high', 'normal', 'high'],
            ['false', 'true', 'false', 'false', 'false', 'true', 'true', 'false', 'false', 'false', 'true', 'true', 'false', 'true']]
 
+Data_set = [['rainy', 'hot', 'high', 'false', 'n'],
+            ['rainy', 'hot', 'high', 'true', 'n'],
+            ['overcast', 'hot', 'high', 'false', 'y'],
+            ['sunny', 'mid', 'high', 'false', 'y'],
+            ['sunny', 'cold', 'normal', 'false', 'y'],
+            ['sunny', 'cold', 'normal', 'true', 'n'],
+            ['overcast', 'cold', 'normal', 'true', 'y'],
+            ['rainy', 'mid', 'high', 'false', 'n'],
+            ['rainy', 'cold', 'normal', 'false', 'y'],
+            ['sunny', 'mid', 'normal', 'false', 'y'],
+            ['rainy', 'mid', 'normal', 'true', 'y'],
+            ['overcast', 'mid', 'high', 'true', 'y'],
+            ['overcast', 'hot', 'normal', 'false', 'y'],
+            ['sunny', 'mid', 'high', 'true', 'n']]
+
 def arrange_dataset(target, attribute, attr_dataset):
     dataset = {}
     for i, attr in enumerate(attribute):
@@ -69,11 +84,48 @@ def gain(attribute, dataset):
 def main():
     dataset = arrange_dataset(target, attribute, attr_dataset)
 
-    for attr in dataset:
-        print attr
-        print gain(attr, dataset)
-        print "============"
 
+    #Evaluate the max gain and find attr
+    choose_priority = {}
+    max_v = 0
+    max_key =""
+    for attr in dataset:
+        gain_v = gain(attr, dataset)
+        if gain_v > max_v:
+            max_v = gain_v
+            max_key = attr
+        choose_priority[attr] = gain_v
+
+    #
+    print dataset[max_key]
+    
+    
+    for attr in dataset[max_key]:
+        tmp_attr_dataset = {}
+        main_attr_index = attribute.index(max_key)
+        if len(dataset[max_key][attr]) == 2:
+            for list_data in Data_set:
+                if list_data[main_attr_index] == attr:
+                    #assign data
+                    for i in list_data:
+                        if i != attr and i != list_data[-1]:
+                            
+                            if not (attribute[list_data.index(i)] in tmp_attr_dataset):
+                                tmp_attr_dataset[attribute[list_data.index(i)]] = {}
+                                tmp_attr_dataset[attribute[list_data.index(i)]][i] = {}
+                                tmp_attr_dataset[attribute[list_data.index(i)]][i][list_data[-1]] = 1
+                            elif not( i in tmp_attr_dataset[attribute[list_data.index(i)]]):
+                                tmp_attr_dataset[attribute[list_data.index(i)]][i] = {}
+                                tmp_attr_dataset[attribute[list_data.index(i)]][i][list_data[-1]] = 1
+                            elif not(list_data[-1] in tmp_attr_dataset[attribute[list_data.index(i)]][i]):
+                                tmp_attr_dataset[attribute[list_data.index(i)]][i][list_data[-1]] = 1
+                            else:
+                                tmp_attr_dataset[attribute[list_data.index(i)]][i][list_data[-1]] += 1
+            
+        print attr
+        print tmp_attr_dataset
+        print "==============="
+            
 if __name__ == "__main__":
     main()
 
