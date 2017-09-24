@@ -3,14 +3,7 @@ from numpy import *
 import numpy as np
 import copy
 
-target = ['n', 'n', 'y', 'y', 'y',
-          'n', 'y', 'n', 'y', 'y',
-          'y', 'y', 'y', 'n']
 attribute = ['outlook', 'temp', 'humidity', 'windy']
-attr_dataset = [['rainy', 'rainy', 'overcast', 'sunny', 'sunny', 'sunny', 'overcast', 'rainy', 'rainy', 'sunny', 'rainy', 'overcast', 'overcast', 'sunny'],
-           ['hot', 'hot', 'hot', 'mid', 'cold', 'cold', 'cold', 'mid', 'cold', 'mid', 'mid', 'mid', 'hot', 'mid'],
-           ['high', 'high', 'high', 'high', 'normal', 'normal', 'normal', 'high', 'normal', 'normal', 'normal', 'high', 'normal', 'high'],
-           ['false', 'true', 'false', 'false', 'false', 'true', 'true', 'false', 'false', 'false', 'true', 'true', 'false', 'true']]
 
 Data_set = [['rainy', 'hot', 'high', 'false', 'n'],
             ['rainy', 'hot', 'high', 'true', 'n'],
@@ -26,19 +19,6 @@ Data_set = [['rainy', 'hot', 'high', 'false', 'n'],
             ['overcast', 'mid', 'high', 'true', 'y'],
             ['overcast', 'hot', 'normal', 'false', 'y'],
             ['sunny', 'mid', 'high', 'true', 'n']]
-
-def arrange_dataset(target, attribute, attr_dataset):
-    dataset = {}
-    for i, attr in enumerate(attribute):
-        dataset[attr] = {}
-        for j, attr_set in enumerate(attr_dataset[i]):
-            if (attr_set in dataset[attr]) is False:
-                dataset[attr][attr_set] = {}
-            if (target[j] in dataset[attr][attr_set]) is False:
-                dataset[attr][attr_set][target[j]] = 1
-            else:
-                dataset[attr][attr_set][target[j]] += 1
-    return dataset
 
 def entropy(y_num, n_num):
     #-p*log2(p) - q*log2(q)
@@ -133,20 +113,40 @@ def rearrange_attr(attribute, data_set, attr):
 #testing
 def main():
 
-    dataset = rearrange_attr(attribute, Data_set, "")
-
     tree = {}
+    once = False
+    keep_flag = True
+    dataset = rearrange_attr(attribute, Data_set, "")
     
+    
+    tmp_tree = {}
+    d_set = {}
     #Evaluate the max gain and find attr
     max_key, max_v = evaluate_attribute(dataset)
-    tmp_tree = {}
 
-    print dataset[max_key]
-    #step1: using the max_key to separate the attribute
-     
-    #step2: check the depth to substract the attribute
+    #Step1: set the tree
+    for key, v in dataset[max_key].iteritems():
+        if once == False:
+            if max_key not in tree:
+                tree[max_key] = {}
+            once = True
+        if len(v) == 2:
+            keep_flag = True
+            
+            d_set = rearrange_attr(attribute, Data_set, {max_key : key})
+            tmp_key, tmp_v = evaluate_attribute(d_set)
+            tree[max_key].update({key : tmp_key})
+        else:
+            tree[max_key].update({key : v})
+        
+    print tree
+    #Step2: check the depth to substract the attribute
+    
+
+        
+        
     print "---------------"
-    print rearrange_attr(attribute, Data_set, {"outlook":"rainy"})
+    print rearrange_attr(attribute, Data_set, {"outlook":"rainy", "humidity" : "high"})
     print "---------------"
     print rearrange_attr(attribute, Data_set, {"outlook":"overcast"})
     print "---------------"
