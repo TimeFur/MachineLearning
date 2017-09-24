@@ -5,7 +5,7 @@ from numpy import *
 import numpy as np
 import copy
 
-attribute = ['outlook', 'temp', 'humidity', 'windy']
+Attribute = ['outlook', 'temp', 'humidity', 'windy']
 
 Data_set = [['rainy', 'hot', 'high', 'false', 'n'],
             ['rainy', 'hot', 'high', 'true', 'n'],
@@ -111,49 +111,52 @@ def rearrange_attr(attribute, data_set, attr):
 
     return data_set_dict
 
-
-#testing
-def main():
-
-    tree = {}
+def tree_flow(dataset, data_set, attribute):
+    
     once = False
-    keep_flag = True
-    dataset = rearrange_attr(attribute, Data_set, "")
-    
-    
-    tmp_tree = {}
+    dset = {}
     d_set = {}
+    attr_set = {}
+    tree = {}
+    
     #Evaluate the max gain and find attr
     max_key, max_v = evaluate_attribute(dataset)
-
-    #Step1: set the tree
     for key, v in dataset[max_key].iteritems():
         if once == False:
             if max_key not in tree:
                 tree[max_key] = {}
             once = True
-        if len(v) == 2:
-            keep_flag = True
+        if len(v) != 1:
             
-            d_set = rearrange_attr(attribute, Data_set, {max_key : key})
-            tmp_key, tmp_v = evaluate_attribute(d_set)
-            tree[max_key].update({key : tmp_key})
+            d_set = copy.deepcopy(data_set)
+            attr_set = copy.deepcopy(attribute)
+            dset = rearrange_attr(attribute, data_set, {max_key: key})
+            attr_set.pop(attribute.index(max_key))
+            for i in d_set:
+                i.pop(attribute.index(max_key))
+            
+            result = tree_flow(dset, d_set, attr_set)
+            tree[max_key].update({key : result})
         else:
             tree[max_key].update({key : v})
-        
-    print tree
-    #Step2: check the depth to substract the attribute
-    
+    return tree
 
-        
-        
-    print "---------------"
-    print rearrange_attr(attribute, Data_set, {"outlook":"rainy", "humidity" : "high"})
-    print "---------------"
-    print rearrange_attr(attribute, Data_set, {"outlook":"overcast"})
-    print "---------------"
-    print rearrange_attr(attribute, Data_set, {"outlook":"sunny"})
+def main():
     
+    data_set = copy.deepcopy(Data_set)
+    attribute = copy.deepcopy(Attribute)
+    dataset = rearrange_attr(attribute, data_set, "")
+    
+    print tree_flow(dataset, data_set, attribute)
+        
+    '''
+    print "---------------"
+    print rearrange_attr(attribute, data_set, {"outlook":"rainy", "humidity" : "high"})
+    print "---------------"
+    print rearrange_attr(attribute, data_set, {"outlook":"overcast"})
+    print "---------------"
+    print rearrange_attr(attribute, data_set, {"outlook":"sunny"})
+    '''
                 
 if __name__ == "__main__":
     main()
