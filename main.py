@@ -32,6 +32,9 @@ def main():
     #KNN
     knn_machine = knn(test, sample, target, k)
     print knn_machine.train()
+
+    #Decision tree
+    
     
 if __name__ == "__main__":
     main()
