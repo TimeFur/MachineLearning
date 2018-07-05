@@ -112,7 +112,32 @@ int myAtoi(string str) {
 	}
 	return result;
 }
-
+int maxArea(vector<int>& height) {
+	int left = 0;
+	int right = height.size() - 1;
+	int w, h;
+	int max = 0;
+	
+	while(right > left)
+	{
+		w = right - left;
+		if (height[left] > height[right])
+		{
+			h = height[right];
+			right--;
+		}
+		else
+		{
+			h = height[left];
+			left++;
+		}
+		if ((w * h) > max)
+			max = (w * h);    
+	}
+	
+	
+	return max;
+}
 void str_pointer()
 {
 	// std::string str_1 = "456";
